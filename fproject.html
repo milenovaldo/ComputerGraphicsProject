@@ -31,10 +31,12 @@
             var engine = new BABYLON.Engine(canvas, true);
             var createScene0 = function () {
 
-                // 1st scene
+                // create and set the 1st scene
                 const scene = new BABYLON.Scene(engine);
                 scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
                 scene.collisionsEnabled = true;
+
+                //create universal camera and set it to the right specifications
                 var camera = new BABYLON.UniversalCamera("camera1", new BABYLON.Vector3(25, 5, 25), scene);                
                 camera.attachControl(canvas, true);
                 camera.inertia = 0.3;
@@ -42,51 +44,57 @@
                 camera.checkCollisions = true;
                 camera.applyGravity = true;
                 camera.rotation.y = 3*Math.PI/2
-                var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+
+                //create all the needed lights
+                var light1 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+                light1.intensity = 0.2;
+                //point lights for the inside of the building and to highlight the car
+                var light = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(-10, 12, 26), scene);
                 light.intensity = 0.7;
+                var light2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(10, 5, 26), scene);
+                light2.intensity = 0.4;
+
+                //initialize shadow creation for the two light sources
+                var shadowGenerator = new BABYLON.ShadowGenerator(1024, light);
+                var shadowGenerator = new BABYLON.ShadowGenerator(1024, light2);
+
+                //create and set ground
                 var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene); 
                 ground.checkCollisions = true;
-                ground.position.y = -0.1
+                ground.position.y = 0.1;
+                ground.receiveShadows = true;
 
+                //create animation for car rotation
                 frameRate = 10;
-
                 var animationGroup = new BABYLON.AnimationGroup("my group");
-
                 var yRot = new BABYLON.Animation("yRot", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
-
                 var keyFramesR = []; 
-
                 keyFramesR.push({
                     frame: 0,
                     value: 0
                 });
-
                 keyFramesR.push({
                     frame: 20 * frameRate,
                     value: 2*Math.PI
                 });
-
                 keyFramesR.push({
                     frame: 40 * frameRate,
                     value: 4 * Math.PI
                 });
-
-
                 yRot.setKeys(keyFramesR);
 
-                var button4 = document.createElement("button");
-                button4.style.top = "200px";
-                button4.style.right = "30px";
-                button4.textContent = "Test Drive";
-                button4.style.width = "40px"
-                button4.style.height = "40px"
+                //creating the needed buttons for color change and testdrive and car change
+                var button5 = document.createElement("button");
+                button5.style.top = "200px";
+                button5.style.right = "30px";
+                button5.style.width = "40px"
+                button5.style.height = "40px"
 
-                button4.setAttribute = ("id", "but");
-                button4.style.position = "absolute";
-                button4.style.color = "black";
-                button4.style.backgroundColor = "white";
+                button5.setAttribute = ("id", "but");
+                button5.style.position = "absolute";
+                button5.style.backgroundColor = "green";
 
-                document.body.appendChild(button4);
+                document.body.appendChild(button5);
 
                 var button = document.createElement("button");
                 button.style.top = "100px";
@@ -105,13 +113,11 @@
                 var button1 = document.createElement("button");
                 button1.style.top = "100px";
                 button1.style.right = "80px";
-                button1.textContent = "red";
                 button1.style.width = "40px"
                 button1.style.height = "40px"
 
                 button1.setAttribute = ("id", "but");
                 button1.style.position = "absolute";
-                button1.style.color = "red";
                 button1.style.backgroundColor = "red";
 
                 document.body.appendChild(button1);
@@ -130,6 +136,59 @@
 
                 document.body.appendChild(button2);
 
+                var button6 = document.createElement("button");
+                button6.style.top = "150px";
+                button6.style.right = "80px";
+                button6.style.width = "40px"
+                button6.style.height = "40px"
+
+                button6.setAttribute = ("id", "but");
+                button6.style.position = "absolute";
+                button6.style.backgroundColor = "orange";
+
+                document.body.appendChild(button6);
+
+                var button7 = document.createElement("button");
+                button7.style.top = "200px";
+                button7.style.right = "80px";
+                button7.style.width = "40px"
+                button7.style.height = "40px"
+
+                button7.setAttribute = ("id", "but");
+                button7.style.position = "absolute";
+                button7.style.backgroundColor = "purple";
+
+                document.body.appendChild(button7);
+
+                var button4 = document.createElement("button");
+                button4.style.top = "250px";
+                button4.style.right = "30px";
+                button4.textContent = "Test Drive";
+                button4.style.width = "90px"
+                button4.style.height = "40px"
+
+                button4.setAttribute = ("id", "but");
+                button4.style.position = "absolute";
+                button4.style.color = "black"
+                button4.style.backgroundColor = "white";
+
+                document.body.appendChild(button4);
+
+                var button8 = document.createElement("button");
+                button8.style.top = "300px";
+                button8.style.right = "30px";
+                button8.textContent = "Tesla";
+                button8.style.width = "90px"
+                button8.style.height = "40px"
+
+                button8.setAttribute = ("id", "but");
+                button8.style.position = "absolute";
+                button8.style.color = "black"
+                button8.style.backgroundColor = "white";
+
+                document.body.appendChild(button8);
+
+                //defining materials for car color
                 redColor = new BABYLON.StandardMaterial("texture", scene);
                 redColor.diffuseColor = new BABYLON.Color3.FromHexString("#FF0000");
                 
@@ -139,6 +198,16 @@
                 whiteColor = new BABYLON.StandardMaterial("texture", scene);
                 whiteColor.diffuseColor = new BABYLON.Color3.FromHexString("#000000");
 
+                orangeColor = new BABYLON.StandardMaterial("texture", scene);
+                orangeColor.diffuseColor = new BABYLON.Color3.FromHexString("#ff7800");
+                
+                purpleColor = new BABYLON.StandardMaterial("texture", scene);
+                purpleColor.diffuseColor = new BABYLON.Color3.FromHexString("#7a00d4");
+
+                greenColor = new BABYLON.StandardMaterial("texture", scene);
+                greenColor.diffuseColor = new BABYLON.Color3.FromHexString("#2ad609");
+
+                //define text for labeling
                 var text = document.createElement("H1");
                 text.style.top = "650px";
                 text.style.right = "550px";
@@ -151,17 +220,7 @@
                 text.style.color = "black";
                 text.style.backgroundColor = "white";
 
-                // // Skybox
-                // var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
-                // var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
-                // skyboxMaterial.backFaceCulling = false;
-                // skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./skybox", scene);
-                // skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-                // skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-                // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-                // skybox.material = skyboxMaterial;
-
-                BABYLON.SceneLoader.ImportMesh("", "./", "alfroom.gltf", scene, function (mesh) {
+                BABYLON.SceneLoader.ImportMesh("", "/assets/", "alfroom.gltf", scene, function (mesh) {
                     for(var i = 0; i < mesh.length; i++){
                         var room = mesh[i];
                         room.scaling = new BABYLON.Vector3(2.5,2.5,2.5);
@@ -172,53 +231,85 @@
                 BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/car/", "copy-of-lamborghini-aventador.obj", scene, function (newMeshes) {
                     for (var i = 0; i < newMeshes.length; i++) {
                         var car = newMeshes[i];
+
+                        //scale model smaller
                         car.scaling = new BABYLON.Vector3(4, 4, 4);
-                        car.position.x = -10
-                        car.position.z = 26
-                        button.addEventListener("click", () => {
+
+                        //reposition the model
+                        car.position.x = -10;
+                        car.position.z = 26;
+
+                        //change car default skin color
+                        newMeshes[14].material = redColor;
+
+                        //cast shadow
+                        shadowGenerator.addShadowCaster(car, true);
+                        car.receiveShadows = true;
+
+                        //button commands
+                        button.addEventListener("click", () => { //change car skin to white
                             if (newMeshes[14]) {
                                 newMeshes[14].material = whiteColor;
                             }
                         })
 
-                        button1.addEventListener("click", () => {
+                        button1.addEventListener("click", () => { //change car skin to red
                             if (newMeshes[14]) {
                                 newMeshes[14].material = redColor;
                             }
                         })
 
-                        button2.addEventListener("click", () => {
+                        button2.addEventListener("click", () => { //change car skin to black
                             if (newMeshes[14]) {
                                 newMeshes[14].material = blackColor;
                             }
                         })
 
-                        button4.addEventListener("click", () => {
+                        button4.addEventListener("click", () => { //click to test drive scene
                             if (scene) {
+                                engine.stopRenderLoop();
                                 engine.runRenderLoop(function() {
                                     scene1.render();
                                 });
                             }
                         })
 
-                        animationGroup.addTargetedAnimation(yRot, car);
+                        button5.addEventListener("click", () => { //change car skin to green
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = greenColor;
+                            }
+                        })
 
-                        animationGroup.play(true);
+                        button6.addEventListener("click", () => { //change car skin to orange
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = orangeColor;
+                            }
+                        })
 
-                        car.actionManager = new BABYLON.ActionManager(scene); 
+                        button7.addEventListener("click", () => { //change car skin to purple
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = purpleColor;
+                            }
+                        })
+
+                        animationGroup.addTargetedAnimation(yRot, car); //set rotation animation for the showroom
+
+                        animationGroup.play(true); //play animation
+
+                        car.actionManager = new BABYLON.ActionManager(scene); //car on click
                         car.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
                                 var camera2 = new BABYLON.UniversalCamera('camera2', new BABYLON.Vector3(-10.9, 4.6, 27.5), scene);
-                                camera2.rotation.y = 3*Math.PI/2;
-                                camera.detachControl(canvas);
-                                camera2.attachControl(canvas);
-                                camera2.inputs.attached.keyboard.detachControl();
-                                animationGroup.stop();
-                                for (var i = 0; i < newMeshes.length; i++) {
+                                camera2.rotation.y = 3*Math.PI/2; //set cameras default target location
+                                camera.detachControl(canvas); //remove controls for camera
+                                camera2.attachControl(canvas); //change camera control to camera2
+                                camera2.inputs.attached.keyboard.detachControl(); //prevents camera from moving from its place
+                                animationGroup.stop(); //stop the rotation animation for the car
+                                for (var i = 0; i < newMeshes.length; i++) { //reset the rotation of the car to default location
                                     newMeshes[i].rotation.y = 0;
                                 }
                                 scene.activeCamera = camera2;
                                 document.body.appendChild(text)
-                                scene.onKeyboardObservable.add((kbInfo) => {
+                                scene.onKeyboardObservable.add((kbInfo) => { //on key "Q" pressdown exit the car
                                 switch (kbInfo.type) {
                                     case BABYLON.KeyboardEventTypes.KEYDOWN:
                                         switch (kbInfo.event.key) {
@@ -236,54 +327,60 @@
                         );
                     } 
                 });
+                //change car model
+                button8.addEventListener("click", () => {
+                    if (scene) {
+                        engine.stopRenderLoop();
+                        window.open("./fproject2.html");
+                        window.close();
+                    }
+                })
                 return scene;
             }
             var createScene1 = function () {
-                //Scene 2
+                //create 2nd scene
                 var scene1 = new BABYLON.Scene(engine);
 
+                //create and set camera 3
                 var camera3 = new BABYLON.UniversalCamera('camera4', new BABYLON.Vector3(-0.9, 4.6, 1.5), scene1);
                 camera3.rotation.y = 3*Math.PI/2;
                 camera3.attachControl(canvas);
                 camera3.inputs.attached.keyboard.detachControl();              
 
+                //set light source
                 var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene1);
                 light1.intensity = 0.9;
-                var ground1 = BABYLON.MeshBuilder.CreateGround("ground1", { width: 1000, height: 35 }, scene1);
-                var ground2 = BABYLON.MeshBuilder.CreateGround("ground2", { width: 1000, height: 500 }, scene1)
-                ground2.position.y = -0.1;
-                var xSlide = new BABYLON.Animation("xSlide", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
 
+                //set the ground
+                var ground1 = BABYLON.MeshBuilder.CreateGround("ground1", { width: 1000, height: 35 }, scene1); //main road
+                var ground2 = BABYLON.MeshBuilder.CreateGround("ground2", { width: 1000, height: 500 }, scene1) //grass area
+                ground2.position.y = -0.1;
+
+                //set skybox for the sky
+                var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:10000.0}, scene1);
+                var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene1);
+                skyboxMaterial.backFaceCulling = false;
+                skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("https://raw.githubusercontent.com/rfrm99/quizmodels/main/skybox/sky", scene1);
+                skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+                skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                skybox.material = skyboxMaterial;
+
+                //initialize materials
                 var grass = new BABYLON.StandardMaterial("grass0", scene1);
-	            grass.diffuseTexture = new BABYLON.Texture("grass.jpg", scene1);
+	            grass.diffuseTexture = new BABYLON.Texture("/assets/grass.jpg", scene1);
                 grass.diffuseTexture.uScale = grass.diffuseTexture.uScale = 10;
                 grass.diffuseTexture.vScale = grass.diffuseTexture.vScale = 10;
 
                 var road = new BABYLON.StandardMaterial("road0", scene1);
-	            road.diffuseTexture = new BABYLON.Texture("road.jpg", scene1);
+	            road.diffuseTexture = new BABYLON.Texture("/assets/road.jpg", scene1);
                 road.diffuseTexture.uScale = road.diffuseTexture.uScale = 10;
 
+                //set ground material
                 ground1.material = road;
                 ground2 .material = grass;
-                var keyFramesP = []; 
-
-                keyFramesP.push({
-                    frame: 0,
-                    value: 0
-                });
-
-                keyFramesP.push({
-                    frame: 20 * frameRate,
-                    value: 50
-                });
-
-                keyFramesP.push({
-                    frame: 40 * frameRate,
-                    value: 100
-                });
-
-                xSlide.setKeys(keyFramesP);
-                
+            
+                //import the lamp and the trees for the scene
                 BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
                     for(var i = 0; i < mesh.length; i++){
                         var lamp = mesh[i];
@@ -422,21 +519,24 @@
                     }
                 });
 
+                //import car model
                 BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/car/", "copy-of-lamborghini-aventador.obj", scene1, function (newMeshes) {
+                    //variables for the camera start position and end position for animation
                     camstart = new BABYLON.Vector3(-0.9, 4.6, 1.5)
                     camend = new BABYLON.Vector3(-418.7, 4.6, 1.5)
                     for (var i = 0; i < newMeshes.length; i++) {
+                        //car settings for the scene
                         var car1 = newMeshes[i];
                         var start = new BABYLON.Vector3(0, 0, 0);
                         var end = new BABYLON.Vector3(-417.8, 0, 0);
                         car1.scaling = new BABYLON.Vector3(4, 4, 4);
+                        //animation creation and setting
                         BABYLON.Animation.CreateAndStartAnimation("carmove", car1, 'position', 20, 1000, start, end, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
                         BABYLON.Animation.CreateAndStartAnimation("carmove", camera3, 'position', 20, 1000, camstart, camend, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
                     }
                 });
                 return scene1
             }
-
             var scene = createScene0();
             var scene1 = createScene1();
             engine.runRenderLoop(function() {
