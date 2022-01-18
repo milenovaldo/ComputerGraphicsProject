@@ -1,0 +1,451 @@
+<html>
+
+<head>
+    <title>CG - Babylon</title>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
+    <script src="babylon.glTF2FileLoader.js"></script>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #render {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="render" touch-action="none">
+        <script>
+            var canvas = document.getElementById("render");
+            var engine = new BABYLON.Engine(canvas, true);
+            var createScene0 = function () {
+
+                // 1st scene
+                const scene = new BABYLON.Scene(engine);
+                scene.gravity = new BABYLON.Vector3(0, -0.15, 0);
+                scene.collisionsEnabled = true;
+                var camera = new BABYLON.UniversalCamera("camera1", new BABYLON.Vector3(25, 5, 25), scene);                
+                camera.attachControl(canvas, true);
+                camera.inertia = 0.3;
+                camera.ellipsoid = new BABYLON.Vector3(1, 2.5, 1);
+                camera.checkCollisions = true;
+                camera.applyGravity = true;
+                camera.rotation.y = 3*Math.PI/2
+                var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+                light.intensity = 0.7;
+                var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 200, height: 200 }, scene); 
+                ground.checkCollisions = true;
+                ground.position.y = -0.1
+
+                frameRate = 10;
+
+                var animationGroup = new BABYLON.AnimationGroup("my group");
+
+                var yRot = new BABYLON.Animation("yRot", "rotation.y", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+                var keyFramesR = []; 
+
+                keyFramesR.push({
+                    frame: 0,
+                    value: 0
+                });
+
+                keyFramesR.push({
+                    frame: 20 * frameRate,
+                    value: 2*Math.PI
+                });
+
+                keyFramesR.push({
+                    frame: 40 * frameRate,
+                    value: 4 * Math.PI
+                });
+
+
+                yRot.setKeys(keyFramesR);
+
+                var button4 = document.createElement("button");
+                button4.style.top = "200px";
+                button4.style.right = "30px";
+                button4.textContent = "Test Drive";
+                button4.style.width = "40px"
+                button4.style.height = "40px"
+
+                button4.setAttribute = ("id", "but");
+                button4.style.position = "absolute";
+                button4.style.color = "black";
+                button4.style.backgroundColor = "white";
+
+                document.body.appendChild(button4);
+
+                var button = document.createElement("button");
+                button.style.top = "100px";
+                button.style.right = "30px";
+                button.textContent = "black";
+                button.style.width = "40px"
+                button.style.height = "40px"
+
+                button.setAttribute = ("id", "but");
+                button.style.position = "absolute";
+                button.style.color = "black";
+                button.style.backgroundColor = "black";
+
+                document.body.appendChild(button);
+                
+                var button1 = document.createElement("button");
+                button1.style.top = "100px";
+                button1.style.right = "80px";
+                button1.textContent = "red";
+                button1.style.width = "40px"
+                button1.style.height = "40px"
+
+                button1.setAttribute = ("id", "but");
+                button1.style.position = "absolute";
+                button1.style.color = "red";
+                button1.style.backgroundColor = "red";
+
+                document.body.appendChild(button1);
+
+                var button2 = document.createElement("button");
+                button2.style.top = "150px";
+                button2.style.right = "30px";
+                button2.textContent = "green";
+                button2.style.width = "40px"
+                button2.style.height = "40px"
+
+                button2.setAttribute = ("id", "but");
+                button2.style.position = "absolute";
+                button2.style.color = "white";
+                button2.style.backgroundColor = "white";
+
+                document.body.appendChild(button2);
+
+                redColor = new BABYLON.StandardMaterial("texture", scene);
+                redColor.diffuseColor = new BABYLON.Color3.FromHexString("#FF0000");
+                
+                blackColor = new BABYLON.StandardMaterial("texture", scene);
+                blackColor.diffuseColor = new BABYLON.Color3.FromHexString("#FFFFFF");
+
+                whiteColor = new BABYLON.StandardMaterial("texture", scene);
+                whiteColor.diffuseColor = new BABYLON.Color3.FromHexString("#000000");
+
+                var text = document.createElement("H1");
+                text.style.top = "650px";
+                text.style.right = "550px";
+                text.textContent = "Press Q to exit the car";
+                text.style.width = "320px"
+                text.style.height = "40px"
+
+                text.setAttribute = ("id", "but");
+                text.style.position = "absolute";
+                text.style.color = "black";
+                text.style.backgroundColor = "white";
+
+                // // Skybox
+                // var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+                // var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+                // skyboxMaterial.backFaceCulling = false;
+                // skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("./skybox", scene);
+                // skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+                // skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+                // skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+                // skybox.material = skyboxMaterial;
+
+                BABYLON.SceneLoader.ImportMesh("", "./", "alfroom.gltf", scene, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var room = mesh[i];
+                        room.scaling = new BABYLON.Vector3(2.5,2.5,2.5);
+                        room.position = new BABYLON.Vector3(-25,0,0)
+                    }
+                });
+                
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/car/", "copy-of-lamborghini-aventador.obj", scene, function (newMeshes) {
+                    for (var i = 0; i < newMeshes.length; i++) {
+                        var car = newMeshes[i];
+                        car.scaling = new BABYLON.Vector3(4, 4, 4);
+                        car.position.x = -10
+                        car.position.z = 26
+                        button.addEventListener("click", () => {
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = whiteColor;
+                            }
+                        })
+
+                        button1.addEventListener("click", () => {
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = redColor;
+                            }
+                        })
+
+                        button2.addEventListener("click", () => {
+                            if (newMeshes[14]) {
+                                newMeshes[14].material = blackColor;
+                            }
+                        })
+
+                        button4.addEventListener("click", () => {
+                            if (scene) {
+                                engine.runRenderLoop(function() {
+                                    scene1.render();
+                                });
+                            }
+                        })
+
+                        animationGroup.addTargetedAnimation(yRot, car);
+
+                        animationGroup.play(true);
+
+                        car.actionManager = new BABYLON.ActionManager(scene); 
+                        car.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickTrigger, function () {
+                                var camera2 = new BABYLON.UniversalCamera('camera2', new BABYLON.Vector3(-10.9, 4.6, 27.5), scene);
+                                camera2.rotation.y = 3*Math.PI/2;
+                                camera.detachControl(canvas);
+                                camera2.attachControl(canvas);
+                                camera2.inputs.attached.keyboard.detachControl();
+                                animationGroup.stop();
+                                for (var i = 0; i < newMeshes.length; i++) {
+                                    newMeshes[i].rotation.y = 0;
+                                }
+                                scene.activeCamera = camera2;
+                                document.body.appendChild(text)
+                                scene.onKeyboardObservable.add((kbInfo) => {
+                                switch (kbInfo.type) {
+                                    case BABYLON.KeyboardEventTypes.KEYDOWN:
+                                        switch (kbInfo.event.key) {
+                                            case "q":
+                                            case "Q":
+                                                camera.attachControl(canvas);
+                                                camera2.detachControl(canvas);
+                                                animationGroup.play(true);
+                                                document.body.removeChild(text);
+                                                scene.activeCamera = camera;
+                                        }
+                                    }
+                                })
+                            })
+                        );
+                    } 
+                });
+                return scene;
+            }
+            var createScene1 = function () {
+                //Scene 2
+                var scene1 = new BABYLON.Scene(engine);
+
+                var camera3 = new BABYLON.UniversalCamera('camera4', new BABYLON.Vector3(-0.9, 4.6, 1.5), scene1);
+                camera3.rotation.y = 3*Math.PI/2;
+                camera3.attachControl(canvas);
+                camera3.inputs.attached.keyboard.detachControl();              
+
+                var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(0, 1, 0), scene1);
+                light1.intensity = 0.9;
+                var ground1 = BABYLON.MeshBuilder.CreateGround("ground1", { width: 1000, height: 35 }, scene1);
+                var ground2 = BABYLON.MeshBuilder.CreateGround("ground2", { width: 1000, height: 500 }, scene1)
+                ground2.position.y = -0.1;
+                var xSlide = new BABYLON.Animation("xSlide", "position.x", frameRate, BABYLON.Animation.ANIMATIONTYPE_FLOAT, BABYLON.Animation.ANIMATIONLOOPMODE_CYCLE);
+
+                var grass = new BABYLON.StandardMaterial("grass0", scene1);
+	            grass.diffuseTexture = new BABYLON.Texture("grass.jpg", scene1);
+                grass.diffuseTexture.uScale = grass.diffuseTexture.uScale = 10;
+                grass.diffuseTexture.vScale = grass.diffuseTexture.vScale = 10;
+
+                var road = new BABYLON.StandardMaterial("road0", scene1);
+	            road.diffuseTexture = new BABYLON.Texture("road.jpg", scene1);
+                road.diffuseTexture.uScale = road.diffuseTexture.uScale = 10;
+
+                ground1.material = road;
+                ground2 .material = grass;
+                var keyFramesP = []; 
+
+                keyFramesP.push({
+                    frame: 0,
+                    value: 0
+                });
+
+                keyFramesP.push({
+                    frame: 20 * frameRate,
+                    value: 50
+                });
+
+                keyFramesP.push({
+                    frame: 40 * frameRate,
+                    value: 100
+                });
+
+                xSlide.setKeys(keyFramesP);
+                
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(0,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(0,-1,-15)
+                        lamp.rotation.y = 3*Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-100,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-100,-1,-15)
+                        lamp.rotation.y = 3*Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-200,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-200,-1,-15)
+                        lamp.rotation.y = 3*Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-300,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-300,-1,-15)
+                        lamp.rotation.y = 3*Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-300,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-400,-1,-15)
+                        lamp.rotation.y = 3*Math.PI/2;
+                    }
+
+                });BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var lamp = mesh[i];
+                        lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
+                        lamp.position = new BABYLON.Vector3(-400,-1,15)
+                        lamp.rotation.y = Math.PI/2;
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/tree/", "Tree.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var tree = mesh[i];
+                        tree.scaling = new BABYLON.Vector3(4,4,4);
+                        tree.position = new BABYLON.Vector3(-50,0,-15)
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/tree/", "Tree.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var tree = mesh[i];
+                        tree.scaling = new BABYLON.Vector3(4,4,4);
+                        tree.position = new BABYLON.Vector3(-150,0,15)
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/tree/", "Tree.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var tree = mesh[i];
+                        tree.scaling = new BABYLON.Vector3(4,4,4);
+                        tree.position = new BABYLON.Vector3(-250,0,-15)
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/tree/", "Tree.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var tree = mesh[i];
+                        tree.scaling = new BABYLON.Vector3(4,4,4);
+                        tree.position = new BABYLON.Vector3(-350,0,15)
+                    }
+                });
+                
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/tree/", "Tree.obj", scene1, function (mesh) {
+                    for(var i = 0; i < mesh.length; i++){
+                        var tree = mesh[i];
+                        tree.scaling = new BABYLON.Vector3(4,4,4);
+                        tree.position = new BABYLON.Vector3(-450,0,-15)
+                    }
+                });
+
+                BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/car/", "copy-of-lamborghini-aventador.obj", scene1, function (newMeshes) {
+                    camstart = new BABYLON.Vector3(-0.9, 4.6, 1.5)
+                    camend = new BABYLON.Vector3(-418.7, 4.6, 1.5)
+                    for (var i = 0; i < newMeshes.length; i++) {
+                        var car1 = newMeshes[i];
+                        var start = new BABYLON.Vector3(0, 0, 0);
+                        var end = new BABYLON.Vector3(-417.8, 0, 0);
+                        car1.scaling = new BABYLON.Vector3(4, 4, 4);
+                        BABYLON.Animation.CreateAndStartAnimation("carmove", car1, 'position', 20, 1000, start, end, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+                        BABYLON.Animation.CreateAndStartAnimation("carmove", camera3, 'position', 20, 1000, camstart, camend, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+                    }
+                });
+                return scene1
+            }
+
+            var scene = createScene0();
+            var scene1 = createScene1();
+            engine.runRenderLoop(function() {
+                scene.render();
+            });
+            window.addEventListener("resize", function() {
+                engine.resize();
+            });
+        </script>
+</body>
+
+</html>
