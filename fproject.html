@@ -64,6 +64,13 @@
                 ground.position.y = 0.1;
                 ground.receiveShadows = true;
 
+                var music = new BABYLON.Sound("Music", "/assets/elevator.mp3", scene, null, {
+                loop: true,
+                autoplay: true
+                });
+
+                music.setVolume(0.2);
+
                 //create animation for car rotation
                 frameRate = 10;
                 var animationGroup = new BABYLON.AnimationGroup("my group");
@@ -177,7 +184,7 @@
                 var button8 = document.createElement("button");
                 button8.style.top = "300px";
                 button8.style.right = "30px";
-                button8.textContent = "Tesla";
+                button8.textContent = "Mustang";
                 button8.style.width = "90px"
                 button8.style.height = "40px"
 
@@ -188,24 +195,51 @@
 
                 document.body.appendChild(button8);
 
+                //texture for interior
+                var leatherTexture = new BABYLON.StandardMaterial("texture", scene);
+                leatherTexture.diffuseTexture = new BABYLON.Texture("/assets/leather.jpg", scene);
+                leatherTexture.backFaceCulling = false;
+
+                var marble = new BABYLON.StandardMaterial("texture", scene);
+                marble.diffuseTexture = new BABYLON.Texture("/assets/marble.jpg", scene);
+                marble.backFaceCulling = false;
+
+                var plank = new BABYLON.StandardMaterial("texture", scene);
+                plank.diffuseTexture = new BABYLON.Texture("/assets/plank.jpg", scene);
+                plank.backFaceCulling = false;
+
+                var blackboard = new BABYLON.StandardMaterial("texture", scene);
+                blackboard.diffuseTexture = new BABYLON.Texture("/assets/blackboard.jpg", scene);
+                blackboard.backFaceCulling = false;
+
+                var metal = new BABYLON.StandardMaterial("metal0", scene);
+	            metal.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
+                metal.backFaceCulling = false;
+                
                 //defining materials for car color
                 redColor = new BABYLON.StandardMaterial("texture", scene);
                 redColor.diffuseColor = new BABYLON.Color3.FromHexString("#FF0000");
+                redColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
                 
                 blackColor = new BABYLON.StandardMaterial("texture", scene);
-                blackColor.diffuseColor = new BABYLON.Color3.FromHexString("#FFFFFF");
+                blackColor.diffuseColor = new BABYLON.Color3.FromHexString("#000000");
+                blackColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
 
                 whiteColor = new BABYLON.StandardMaterial("texture", scene);
-                whiteColor.diffuseColor = new BABYLON.Color3.FromHexString("#000000");
+                whiteColor.diffuseColor = new BABYLON.Color3.FromHexString("#FFFFFF");
+                whiteColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
 
                 orangeColor = new BABYLON.StandardMaterial("texture", scene);
                 orangeColor.diffuseColor = new BABYLON.Color3.FromHexString("#ff7800");
+                orangeColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
                 
                 purpleColor = new BABYLON.StandardMaterial("texture", scene);
                 purpleColor.diffuseColor = new BABYLON.Color3.FromHexString("#7a00d4");
+                purpleColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
 
                 greenColor = new BABYLON.StandardMaterial("texture", scene);
                 greenColor.diffuseColor = new BABYLON.Color3.FromHexString("#2ad609");
+                greenColor.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene);
 
                 //define text for labeling
                 var text = document.createElement("H1");
@@ -220,18 +254,26 @@
                 text.style.color = "black";
                 text.style.backgroundColor = "white";
 
+                ground.material = marble;
+
                 BABYLON.SceneLoader.ImportMesh("", "/assets/", "alfroom.gltf", scene, function (mesh) {
                     for(var i = 0; i < mesh.length; i++){
                         var room = mesh[i];
                         room.scaling = new BABYLON.Vector3(2.5,2.5,2.5);
                         room.position = new BABYLON.Vector3(-25,0,0)
+                        mesh[11].material = plank;
+                        mesh[2].material = metal;
+                        mesh[6].material = metal;
+                        mesh[8].material = metal;
+                        mesh[10].material = metal;
+                        mesh[14].material = metal;
+                        mesh[15].material = blackboard;
                     }
                 });
                 
                 BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/car/", "copy-of-lamborghini-aventador.obj", scene, function (newMeshes) {
                     for (var i = 0; i < newMeshes.length; i++) {
                         var car = newMeshes[i];
-
                         //scale model smaller
                         car.scaling = new BABYLON.Vector3(4, 4, 4);
 
@@ -239,29 +281,40 @@
                         car.position.x = -10;
                         car.position.z = 26;
 
+                        // car.material = leatherTexture;
                         //change car default skin color
                         newMeshes[14].material = redColor;
 
+                        //change interior texture to leather
+                        newMeshes[29].material = leatherTexture;
+                        newMeshes[28].material = leatherTexture;
+                        newMeshes[31].material = metal;
+
+                        newMeshes[1].material = redColor;
+                        
                         //cast shadow
                         shadowGenerator.addShadowCaster(car, true);
                         car.receiveShadows = true;
 
                         //button commands
-                        button.addEventListener("click", () => { //change car skin to white
+                        button.addEventListener("click", () => { //change car skin to black
                             if (newMeshes[14]) {
-                                newMeshes[14].material = whiteColor;
+                                newMeshes[14].material = blackColor;
+                                newMeshes[1].material = blackColor;
                             }
                         })
 
                         button1.addEventListener("click", () => { //change car skin to red
                             if (newMeshes[14]) {
                                 newMeshes[14].material = redColor;
+                                newMeshes[1].material = redColor;
                             }
                         })
 
-                        button2.addEventListener("click", () => { //change car skin to black
+                        button2.addEventListener("click", () => { //change car skin to white
                             if (newMeshes[14]) {
-                                newMeshes[14].material = blackColor;
+                                newMeshes[14].material = whiteColor;
+                                newMeshes[1].material = whiteColor;
                             }
                         })
 
@@ -277,18 +330,21 @@
                         button5.addEventListener("click", () => { //change car skin to green
                             if (newMeshes[14]) {
                                 newMeshes[14].material = greenColor;
+                                newMeshes[1].material = greenColor;
                             }
                         })
 
                         button6.addEventListener("click", () => { //change car skin to orange
                             if (newMeshes[14]) {
                                 newMeshes[14].material = orangeColor;
+                                newMeshes[1].material = orangeColor;
                             }
                         })
 
                         button7.addEventListener("click", () => { //change car skin to purple
                             if (newMeshes[14]) {
                                 newMeshes[14].material = purpleColor;
+                                newMeshes[1].material = purpleColor;
                             }
                         })
 
@@ -366,7 +422,7 @@
                 skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
                 skybox.material = skyboxMaterial;
 
-                //initialize materials
+                //initialize materials texture
                 var grass = new BABYLON.StandardMaterial("grass0", scene1);
 	            grass.diffuseTexture = new BABYLON.Texture("/assets/grass.jpg", scene1);
                 grass.diffuseTexture.uScale = grass.diffuseTexture.uScale = 10;
@@ -376,6 +432,22 @@
 	            road.diffuseTexture = new BABYLON.Texture("/assets/road.jpg", scene1);
                 road.diffuseTexture.uScale = road.diffuseTexture.uScale = 10;
 
+                var wood = new BABYLON.StandardMaterial("wood0", scene1);
+	            wood.diffuseTexture = new BABYLON.Texture("/assets/wood.jpg", scene1);
+
+                var leaf = new BABYLON.StandardMaterial("leaf0", scene1);
+	            leaf.diffuseTexture = new BABYLON.Texture("/assets/leaf.jpg", scene1);
+
+                var metal = new BABYLON.StandardMaterial("metal0", scene1);
+	            metal.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene1);
+
+                var leatherTexture = new BABYLON.StandardMaterial("texture", scene1);
+                leatherTexture.diffuseTexture = new BABYLON.Texture("/assets/leather.jpg", scene1);
+
+                red = new BABYLON.StandardMaterial("texture", scene1);
+                red.diffuseColor = new BABYLON.Color3.FromHexString("#FF0000");
+                red.diffuseTexture = new BABYLON.Texture("/assets/metal.jpg", scene1);
+                
                 //set ground material
                 ground1.material = road;
                 ground2 .material = grass;
@@ -387,6 +459,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(0,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -396,6 +469,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(0,-1,-15)
                         lamp.rotation.y = 3*Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -405,6 +479,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-100,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -414,6 +489,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-100,-1,-15)
                         lamp.rotation.y = 3*Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -423,6 +499,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-200,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -432,6 +509,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-200,-1,-15)
                         lamp.rotation.y = 3*Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -441,6 +519,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-300,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -450,6 +529,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-300,-1,-15)
                         lamp.rotation.y = 3*Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -459,6 +539,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-300,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -468,6 +549,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-400,-1,-15)
                         lamp.rotation.y = 3*Math.PI/2;
+                        mesh[0].material = metal;
                     }
 
                 });BABYLON.SceneLoader.ImportMesh("", "https://raw.githubusercontent.com/rfrm99/quizmodels/main/streetlight/", "Street Light.obj", scene1, function (mesh) {
@@ -476,6 +558,7 @@
                         lamp.scaling = new BABYLON.Vector3(1.5,1.5,1.5);
                         lamp.position = new BABYLON.Vector3(-400,-1,15)
                         lamp.rotation.y = Math.PI/2;
+                        mesh[0].material = metal;
                     }
                 });
 
@@ -484,6 +567,8 @@
                         var tree = mesh[i];
                         tree.scaling = new BABYLON.Vector3(4,4,4);
                         tree.position = new BABYLON.Vector3(-50,0,-15)
+                        mesh[0].material = wood;
+                        mesh[1].material = leaf;
                     }
                 });
 
@@ -492,6 +577,8 @@
                         var tree = mesh[i];
                         tree.scaling = new BABYLON.Vector3(4,4,4);
                         tree.position = new BABYLON.Vector3(-150,0,15)
+                        mesh[0].material = wood;
+                        mesh[1].material = leaf;
                     }
                 });
 
@@ -500,6 +587,8 @@
                         var tree = mesh[i];
                         tree.scaling = new BABYLON.Vector3(4,4,4);
                         tree.position = new BABYLON.Vector3(-250,0,-15)
+                        mesh[0].material = wood;
+                        mesh[1].material = leaf;
                     }
                 });
 
@@ -508,6 +597,8 @@
                         var tree = mesh[i];
                         tree.scaling = new BABYLON.Vector3(4,4,4);
                         tree.position = new BABYLON.Vector3(-350,0,15)
+                        mesh[0].material = wood;
+                        mesh[1].material = leaf;
                     }
                 });
                 
@@ -516,6 +607,8 @@
                         var tree = mesh[i];
                         tree.scaling = new BABYLON.Vector3(4,4,4);
                         tree.position = new BABYLON.Vector3(-450,0,-15)
+                        mesh[0].material = wood;
+                        mesh[1].material = leaf;
                     }
                 });
 
@@ -527,6 +620,12 @@
                     for (var i = 0; i < newMeshes.length; i++) {
                         //car settings for the scene
                         var car1 = newMeshes[i];
+                        //
+                        newMeshes[14].material = red;
+                        //initialize interior texture
+                        newMeshes[28].material = leatherTexture;
+                        newMeshes[29].material = leatherTexture;
+                        newMeshes[1].material = red;
                         var start = new BABYLON.Vector3(0, 0, 0);
                         var end = new BABYLON.Vector3(-417.8, 0, 0);
                         car1.scaling = new BABYLON.Vector3(4, 4, 4);
